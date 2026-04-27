@@ -1,7 +1,9 @@
-import { Platform } from 'react-native';
-
-export const font = {
-  regular: Platform.select({ ios: 'System', android: 'sans-serif', default: 'System' }),
-  medium: Platform.select({ ios: 'System', android: 'sans-serif-medium', default: 'System' }),
-};
+export const fontFamily = {
+  regular: 'Poppins_400Regular',
+  medium: 'Poppins_500Medium',
+  semibold: 'Poppins_600SemiBold',
+  bold: 'Poppins_700Bold',
+  extrabold: 'Poppins_800ExtraBold',
+  black: 'Poppins_900Black',
+} as const;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 import { GlassCard } from './Glass';
 
 export function ModalShell({
@@ -32,7 +32,7 @@ export function ModalShell({
         <Pressable onPress={() => {}} style={{ width: '100%', maxWidth: width }}>
           <GlassCard padding={16} style={{ backgroundColor: colors.card2 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-              <Text style={{ color: colors.text, fontSize: 18, fontWeight: '800' }}>{title}</Text>
+              <Text style={{ color: colors.text, fontSize: 18, fontFamily: fontFamily.extrabold }}>{title}</Text>
               <Pressable onPress={onClose} hitSlop={10} style={{ padding: 2 }}>
                 <MaterialCommunityIcons name="close" size={20} color="rgba(233,238,243,0.6)" />
               </Pressable>

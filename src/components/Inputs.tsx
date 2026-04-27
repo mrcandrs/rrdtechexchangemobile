@@ -2,12 +2,14 @@ import React, { useMemo, useState } from 'react';
 import { Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 import { fromISODate, formatShortDMY, toISODate } from '../utils/dates';
 import { GlassCard } from './Glass';
 
 export function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <Text style={{ color: colors.text3, fontSize: 11, fontWeight: '800', marginBottom: 6 }}>{children}</Text>;
+  return (
+    <Text style={{ color: colors.text3, fontSize: 11, fontFamily: fontFamily.extrabold, marginBottom: 6 }}>{children}</Text>
+  );
 }
 
 export function TextField({
@@ -46,7 +48,7 @@ export function TextField({
         keyboardType={keyboardType}
         secureTextEntry={secureTextEntry}
         autoCapitalize="none"
-        style={{ color: colors.text, fontWeight: '700', flex: 1, paddingVertical: 0 }}
+        style={{ color: colors.text, fontFamily: fontFamily.bold, flex: 1, paddingVertical: 0 }}
       />
       {right ? <View style={{ marginLeft: 8 }}>{right}</View> : null}
     </View>
@@ -111,7 +113,7 @@ export function SelectField<T extends string>({
           justifyContent: 'space-between',
         }}
       >
-        <Text style={{ color: label ? colors.text : 'rgba(233,238,243,0.28)', fontWeight: '700' }}>
+        <Text style={{ color: label ? colors.text : 'rgba(233,238,243,0.28)', fontFamily: fontFamily.bold }}>
           {label ?? placeholder}
         </Text>
         <MaterialCommunityIcons name="chevron-down" size={18} color="rgba(233,238,243,0.55)" />
@@ -124,7 +126,7 @@ export function SelectField<T extends string>({
         >
           <Pressable onPress={() => {}} style={{ width: '100%' }}>
             <GlassCard padding={12}>
-              <Text style={{ color: colors.text, fontWeight: '800', marginBottom: 10 }}>Select</Text>
+              <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold, marginBottom: 10 }}>Select</Text>
               {options.map((o) => (
                 <Pressable
                   key={o.value}
@@ -142,7 +144,7 @@ export function SelectField<T extends string>({
                     justifyContent: 'space-between',
                   })}
                 >
-                  <Text style={{ color: colors.text, fontWeight: '700' }}>{o.label}</Text>
+                  <Text style={{ color: colors.text, fontFamily: fontFamily.bold }}>{o.label}</Text>
                   {value === o.value ? (
                     <MaterialCommunityIcons name="check" size={18} color={colors.cyan2} />
                   ) : (
@@ -184,7 +186,7 @@ export function DateField({
           justifyContent: 'space-between',
         }}
       >
-        <Text style={{ color: colors.text, fontWeight: '700' }}>{formatShortDMY(date)}</Text>
+        <Text style={{ color: colors.text, fontFamily: fontFamily.bold }}>{formatShortDMY(date)}</Text>
         <MaterialCommunityIcons name="calendar" size={18} color="rgba(233,238,243,0.55)" />
       </Pressable>
 
@@ -195,7 +197,7 @@ export function DateField({
         >
           <Pressable onPress={() => {}} style={{ width: '100%' }}>
             <GlassCard padding={12}>
-              <Text style={{ color: colors.text, fontWeight: '800', marginBottom: 10 }}>Pick a date</Text>
+              <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold, marginBottom: 10 }}>Pick a date</Text>
               <View style={{ borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: colors.border }}>
                 <Calendar
                   current={iso}
@@ -208,9 +210,9 @@ export function DateField({
                   theme={{
                     calendarBackground: 'rgba(255,255,255,0.03)',
                     monthTextColor: colors.text,
-                    textMonthFontWeight: '800',
+                    textMonthFontFamily: fontFamily.extrabold,
                     dayTextColor: colors.text,
-                    textDayFontWeight: '700',
+                    textDayFontFamily: fontFamily.bold,
                     textDisabledColor: 'rgba(233,238,243,0.25)',
                     arrowColor: colors.cyan2,
                     todayTextColor: colors.cyan2,
@@ -234,7 +236,7 @@ export function DateField({
                   borderColor: colors.border,
                 })}
               >
-                <Text style={{ color: colors.text, fontWeight: '800' }}>Done</Text>
+                <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold }}>Done</Text>
               </Pressable>
             </GlassCard>
           </Pressable>

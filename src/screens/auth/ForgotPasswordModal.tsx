@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { ModalShell } from '../../components/ModalShell';
 import { FieldLabel, TextField } from '../../components/Inputs';
 import { PrimaryButton } from '../../components/Button';
-import { colors } from '../../theme';
+import { colors, fontFamily } from '../../theme';
 import { useAuth } from '../../auth/AuthContext';
 
 export function ForgotPasswordModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
@@ -36,7 +36,13 @@ export function ForgotPasswordModal({ visible, onClose }: { visible: boolean; on
         </View>
 
         {status ? (
-          <Text style={{ color: status.type === 'error' ? colors.red : colors.green, fontWeight: '800', fontSize: 12 }}>
+          <Text
+            style={{
+              color: status.type === 'error' ? colors.red : colors.green,
+              fontFamily: fontFamily.extrabold,
+              fontSize: 12,
+            }}
+          >
             {status.message}
           </Text>
         ) : null}

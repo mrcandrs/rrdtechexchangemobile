@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 
 type FeedbackType = 'success' | 'error' | 'info';
 
@@ -54,7 +54,7 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
             borderColor: colors.border2,
           }}
         >
-          <Text style={{ color: '#051014', fontWeight: '900' }}>{message.text}</Text>
+          <Text style={{ color: '#051014', fontFamily: fontFamily.black }}>{message.text}</Text>
         </View>
       ) : null}
     </FeedbackContext.Provider>

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 import { GlassCard } from '../components/Glass';
 import { H1, H2, Label, P } from '../components/Text';
 import { formatPeso } from '../utils/money';
@@ -36,7 +36,9 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
     <ScrollView contentContainerStyle={{ padding: 18, paddingBottom: 140 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View>
-          <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 10, letterSpacing: 0.8 }}>RRD TECH EXCHANGE</Text>
+          <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 10, letterSpacing: 0.8 }}>
+            RRD TECH EXCHANGE
+          </Text>
           <H1 style={{ marginTop: 4 }}>Expense Tracker</H1>
           <Pressable
             onPress={() => {
@@ -45,7 +47,7 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
             }}
             style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, marginTop: 4 })}
           >
-            <Text style={{ color: colors.text2, fontWeight: '700', fontSize: 11 }}>
+            <Text style={{ color: colors.text2, fontFamily: fontFamily.bold, fontSize: 11 }}>
               {displayName} • {role === 'main_admin' ? 'Main Admin' : 'Member'} • Edit
             </Text>
           </Pressable>
@@ -89,11 +91,11 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
                 borderColor: 'rgba(18,214,230,0.25)',
               }}
             >
-              <Text style={{ color: colors.cyan2, fontWeight: '900', fontSize: 10 }}>₱</Text>
+              <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 10 }}>₱</Text>
             </View>
           </View>
           <H2 style={{ marginTop: 6 }}>{formatPeso(thisMonth)}</H2>
-          <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 10, marginTop: 4 }}>0</Text>
+          <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 10, marginTop: 4 }}>0</Text>
         </GlassCard>
 
         <GlassCard style={{ flex: 1 }}>
@@ -111,11 +113,11 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
                 borderColor: 'rgba(18,214,230,0.25)',
               }}
             >
-              <Text style={{ color: colors.cyan2, fontWeight: '900', fontSize: 10 }}>≡</Text>
+              <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 10 }}>≡</Text>
             </View>
           </View>
           <H2 style={{ marginTop: 6 }}>{formatPeso(today)}</H2>
-          <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 10, marginTop: 4 }}> </Text>
+          <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 10, marginTop: 4 }}> </Text>
         </GlassCard>
       </View>
 
@@ -133,11 +135,11 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
               justifyContent: 'center',
             }}
           >
-            <Text style={{ color: colors.cyan2, fontWeight: '900' }}>⎘</Text>
+            <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black }}>⎘</Text>
           </View>
           <View style={{ flex: 1 }}>
             <P>Total Transactions</P>
-            <Text style={{ color: colors.text, fontWeight: '800', marginTop: 2 }}>{txCount} this month</Text>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold, marginTop: 2 }}>{txCount} this month</Text>
           </View>
         </View>
       </GlassCard>
@@ -151,7 +153,9 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
             return (
               <View key={b.label} style={{ alignItems: 'center', width: 34 }}>
                 <View style={{ width: 10, height: h, borderRadius: 4, backgroundColor: colors.cyan2, opacity: 0.9 }} />
-                <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 10, marginTop: 8 }}>{b.label}</Text>
+                <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 10, marginTop: 8 }}>
+                  {b.label}
+                </Text>
               </View>
             );
           })}
@@ -183,11 +187,13 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
                   >
                     <CategoryIcon category={c.category} size={14} color="rgba(233,238,243,0.7)" />
                   </View>
-                  <Text style={{ color: colors.text, fontWeight: '800' }}>{c.category}</Text>
+                  <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold }}>{c.category}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                  <Text style={{ color: colors.text, fontWeight: '900' }}>{formatPeso(total)}</Text>
-                  <Text style={{ color: colors.text3, fontWeight: '800', width: 34, textAlign: 'right' }}>{pct}%</Text>
+                  <Text style={{ color: colors.text, fontFamily: fontFamily.black }}>{formatPeso(total)}</Text>
+                  <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, width: 34, textAlign: 'right' }}>
+                    {pct}%
+                  </Text>
                 </View>
               </View>
               <View
@@ -210,7 +216,7 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <H2>Recent Expenses</H2>
           <Pressable onPress={onSeeAll}>
-            <Text style={{ color: colors.cyan2, fontWeight: '800', fontSize: 12 }}>See all ›</Text>
+            <Text style={{ color: colors.cyan2, fontFamily: fontFamily.extrabold, fontSize: 12 }}>See all ›</Text>
           </Pressable>
         </View>
         <View style={{ height: 10 }} />
@@ -242,13 +248,13 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
                 <CategoryIcon category={e.category} size={16} color="rgba(233,238,243,0.7)" />
               </View>
               <View>
-                <Text style={{ color: colors.text, fontWeight: '800' }}>{e.title}</Text>
-                <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11 }}>
+                <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold }}>{e.title}</Text>
+                <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
                   {e.occurredAtISO} • {e.createdByName || 'Unknown'}
                 </Text>
               </View>
             </View>
-            <Text style={{ color: colors.text, fontWeight: '900' }}>-{formatPeso(e.amount).slice(1)}</Text>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.black }}>-{formatPeso(e.amount).slice(1)}</Text>
           </View>
         ))}
       </GlassCard>

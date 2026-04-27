@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 import { GlassCard } from '../components/Glass';
 import { H1, H2, Label, P } from '../components/Text';
 import { formatPeso } from '../utils/money';
@@ -55,7 +55,7 @@ export function ChallengesScreen() {
             })}
           >
             <MaterialCommunityIcons name="plus" size={16} color={colors.cyan2} />
-            <Text style={{ color: colors.cyan2, fontWeight: '900', fontSize: 12 }}>New</Text>
+            <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 12 }}>New</Text>
           </Pressable>
         </View>
 
@@ -90,7 +90,7 @@ export function ChallengesScreen() {
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                   <View style={{ flex: 1, paddingRight: 8 }}>
                     <H2 style={{ fontSize: 14 }}>{c.title}</H2>
-                    <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11, marginTop: 2 }}>
+                    <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11, marginTop: 2 }}>
                       {c.category} • {c.period} • ends {c.endISO}
                     </Text>
                   </View>
@@ -122,8 +122,10 @@ export function ChallengesScreen() {
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                  <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11 }}>{formatPeso(spent)} spent</Text>
-                  <Text style={{ color: over ? colors.red : colors.green, fontWeight: '900', fontSize: 11 }}>
+                  <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
+                    {formatPeso(spent)} spent
+                  </Text>
+                  <Text style={{ color: over ? colors.red : colors.green, fontFamily: fontFamily.black, fontSize: 11 }}>
                     {over ? `${formatPeso(Math.abs(remaining))} over limit!` : `${formatPeso(remaining)} remaining`}
                   </Text>
                 </View>
@@ -140,7 +142,7 @@ export function ChallengesScreen() {
                   <View style={{ width: `${Math.min(100, pct)}%`, height: 6, backgroundColor: over ? colors.red : colors.cyan2 }} />
                 </View>
 
-                <Text style={{ color: colors.cyan2, fontWeight: '900', fontSize: 11, marginTop: 10 }}>
+                <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 11, marginTop: 10 }}>
                   {challengeIsActive(c, now) ? `In Progress • ends ${c.endISO}` : `Ended • ended ${c.endISO}`}
                 </Text>
               </GlassCard>

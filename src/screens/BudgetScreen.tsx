@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 import { GlassCard } from '../components/Glass';
 import { H1, H2, Label, P } from '../components/Text';
 import { formatPeso } from '../utils/money';
@@ -62,7 +62,7 @@ export function BudgetScreen() {
             })}
           >
             <MaterialCommunityIcons name="plus" size={16} color={colors.cyan2} />
-            <Text style={{ color: colors.cyan2, fontWeight: '900', fontSize: 12 }}>Add</Text>
+            <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 12 }}>Add</Text>
           </Pressable>
         </View>
 
@@ -74,7 +74,7 @@ export function BudgetScreen() {
             </View>
             <View style={{ alignItems: 'flex-end' }}>
               <Label>Budget</Label>
-              <Text style={{ color: colors.text3, fontWeight: '900', fontSize: 14, marginTop: 6 }}>
+              <Text style={{ color: colors.text3, fontFamily: fontFamily.black, fontSize: 14, marginTop: 6 }}>
                 {formatPeso(totalLimit)}
               </Text>
             </View>
@@ -99,11 +99,11 @@ export function BudgetScreen() {
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10 }}>
-            <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11 }}>
+            <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
               {totalLimit > 0 ? `${Math.round((totalSpent / totalLimit) * 100)}% used` : 'No budgets yet'}
             </Text>
             {totalLimit > 0 && totalSpent > totalLimit ? (
-              <Text style={{ color: colors.red, fontWeight: '900', fontSize: 11 }}>△ Over budget!</Text>
+              <Text style={{ color: colors.red, fontFamily: fontFamily.black, fontSize: 11 }}>△ Over budget!</Text>
             ) : null}
           </View>
         </GlassCard>
@@ -139,7 +139,7 @@ export function BudgetScreen() {
                       </View>
                       <View>
                         <H2 style={{ fontSize: 14 }}>{b.category}</H2>
-                        <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11 }}>
+                        <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
                           {formatPeso(spent)} / {formatPeso(b.monthlyLimit)}
                         </Text>
                       </View>
@@ -190,7 +190,7 @@ export function BudgetScreen() {
                   </View>
 
                   {exceeded ? (
-                    <Text style={{ color: colors.red, fontWeight: '900', fontSize: 11, marginTop: 8 }}>
+                    <Text style={{ color: colors.red, fontFamily: fontFamily.black, fontSize: 11, marginTop: 8 }}>
                       ▲ Exceeded by {formatPeso(spent - b.monthlyLimit)}
                     </Text>
                   ) : null}

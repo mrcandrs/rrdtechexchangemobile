@@ -4,7 +4,7 @@ import { AuthShell } from './AuthShell';
 import { H1, P } from '../../components/Text';
 import { FieldLabel, PasswordField, TextField } from '../../components/Inputs';
 import { PrimaryButton } from '../../components/Button';
-import { colors } from '../../theme';
+import { colors, fontFamily } from '../../theme';
 import { useAuth } from '../../auth/AuthContext';
 
 export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
@@ -47,12 +47,14 @@ export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
         </View>
 
         {password && password.length < 6 ? (
-          <Text style={{ color: colors.orange, fontWeight: '800', fontSize: 12 }}>Password should be at least 6 characters.</Text>
+          <Text style={{ color: colors.orange, fontFamily: fontFamily.extrabold, fontSize: 12 }}>
+            Password should be at least 6 characters.
+          </Text>
         ) : null}
         {confirm && confirm !== password ? (
-          <Text style={{ color: colors.orange, fontWeight: '800', fontSize: 12 }}>Passwords do not match.</Text>
+          <Text style={{ color: colors.orange, fontFamily: fontFamily.extrabold, fontSize: 12 }}>Passwords do not match.</Text>
         ) : null}
-        {error ? <Text style={{ color: colors.red, fontWeight: '800', fontSize: 12 }}>{error}</Text> : null}
+        {error ? <Text style={{ color: colors.red, fontFamily: fontFamily.extrabold, fontSize: 12 }}>{error}</Text> : null}
 
         <PrimaryButton
           title={loading ? 'Creating…' : 'Register'}
@@ -72,7 +74,7 @@ export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
         />
 
         <Pressable onPress={onGoLogin} style={{ alignSelf: 'center', marginTop: 8 }}>
-          <Text style={{ color: colors.cyan2, fontWeight: '900' }}>Back to login</Text>
+          <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black }}>Back to login</Text>
         </Pressable>
       </View>
     </AuthShell>

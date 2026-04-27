@@ -3,7 +3,7 @@ import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-nativ
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
 import type { ExpenseCategory } from '../data/types';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 import { GlassCard } from '../components/Glass';
 import { H1, H2, Label } from '../components/Text';
 import { formatPeso } from '../utils/money';
@@ -78,7 +78,7 @@ export function HistoryScreen({
             onChangeText={setQuery}
             placeholder="Search expenses..."
             placeholderTextColor="rgba(233,238,243,0.28)"
-            style={{ color: colors.text, fontWeight: '700', flex: 1 }}
+            style={{ color: colors.text, fontFamily: fontFamily.bold, flex: 1 }}
           />
         </View>
 
@@ -97,7 +97,7 @@ export function HistoryScreen({
           })}
         >
           <MaterialCommunityIcons name="filter-variant" size={16} color="rgba(233,238,243,0.6)" />
-          <Text style={{ color: colors.text, fontWeight: '800', fontSize: 12 }}>{cat}</Text>
+          <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold, fontSize: 12 }}>{cat}</Text>
           <MaterialCommunityIcons name="chevron-down" size={16} color="rgba(233,238,243,0.6)" />
         </Pressable>
       </View>
@@ -122,7 +122,7 @@ export function HistoryScreen({
                     c === cat ? 'rgba(18,214,230,0.12)' : pressed ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
                 })}
               >
-                <Text style={{ color: colors.text, fontWeight: '800', fontSize: 12 }}>{c}</Text>
+                <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold, fontSize: 12 }}>{c}</Text>
               </Pressable>
             ))}
           </View>
@@ -154,16 +154,16 @@ export function HistoryScreen({
                       </View>
                       <View>
                         <H2 style={{ fontSize: 14 }}>{e.title}</H2>
-                        <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11 }}>
+                        <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
                           {e.category} • {e.paymentMethod}
                         </Text>
-                        <Text style={{ color: 'rgba(233,238,243,0.35)', fontWeight: '800', fontSize: 10, marginTop: 2 }}>
+                        <Text style={{ color: 'rgba(233,238,243,0.35)', fontFamily: fontFamily.extrabold, fontSize: 10, marginTop: 2 }}>
                           Added by {e.createdByName || 'Unknown'}
                         </Text>
                       </View>
                     </View>
                     <View style={{ alignItems: 'flex-end', gap: 8 }}>
-                      <Text style={{ color: colors.text, fontWeight: '900' }}>-{formatPeso(e.amount).slice(1)}</Text>
+                      <Text style={{ color: colors.text, fontFamily: fontFamily.black }}>-{formatPeso(e.amount).slice(1)}</Text>
                       {canModifyAll ? (
                         <Pressable
                           onPress={() => {

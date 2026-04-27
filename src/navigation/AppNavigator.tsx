@@ -4,7 +4,7 @@ import { NavigationContainer, DarkTheme, type Theme } from '@react-navigation/na
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 import { Screen } from '../components/Screen';
 import { FloatingActionButton } from '../components/FAB';
 import { GlassCard } from '../components/Glass';
@@ -66,7 +66,7 @@ export function AppNavigator() {
           screenOptions={({ route }) => ({
             headerShown: false,
             tabBarShowLabel: true,
-            tabBarLabelStyle: { fontSize: 10, fontWeight: '800' },
+            tabBarLabelStyle: { fontSize: 10, fontFamily: fontFamily.extrabold },
             tabBarActiveTintColor: colors.cyan2,
             tabBarInactiveTintColor: 'rgba(233,238,243,0.45)',
             tabBarStyle,
@@ -102,7 +102,7 @@ export function AppNavigator() {
           >
             <Pressable onPress={() => {}} style={{ alignSelf: 'flex-end', width: 260 }}>
               <GlassCard padding={12}>
-                <Text style={{ color: colors.text, fontWeight: '900', marginBottom: 10 }}>Quick actions</Text>
+                <Text style={{ color: colors.text, fontFamily: fontFamily.black, marginBottom: 10 }}>Quick actions</Text>
                 <ActionRow
                   icon="plus-circle-outline"
                   title="Add Expense"
@@ -174,7 +174,7 @@ function ActionRow({
       })}
     >
       <MaterialCommunityIcons name={icon} size={18} color={colors.cyan2} />
-      <Text style={{ color: colors.text, fontWeight: '800' }}>{title}</Text>
+      <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold }}>{title}</Text>
     </Pressable>
   );
 }

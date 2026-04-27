@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleProp, Text, ViewStyle } from 'react-native';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 
 export function PrimaryButton({
   title,
@@ -29,7 +29,7 @@ export function PrimaryButton({
         style,
       ]}
     >
-      <Text style={{ color: '#032226', fontWeight: '800', letterSpacing: 0.2 }}>{title}</Text>
+      <Text style={{ color: '#032226', fontFamily: fontFamily.extrabold, letterSpacing: 0.2 }}>{title}</Text>
     </Pressable>
   );
 }
@@ -60,7 +60,7 @@ export function GhostButton({
         style,
       ]}
     >
-      <Text style={{ color: colors.text, fontWeight: '700', fontSize: 12 }}>{title}</Text>
+      <Text style={{ color: colors.text, fontFamily: fontFamily.bold, fontSize: 12 }}>{title}</Text>
     </Pressable>
   );
 }

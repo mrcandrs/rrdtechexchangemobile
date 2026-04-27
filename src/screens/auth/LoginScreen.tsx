@@ -4,7 +4,7 @@ import { AuthShell } from './AuthShell';
 import { H1, P } from '../../components/Text';
 import { FieldLabel, PasswordField, TextField } from '../../components/Inputs';
 import { PrimaryButton } from '../../components/Button';
-import { colors } from '../../theme';
+import { colors, fontFamily } from '../../theme';
 import { useAuth } from '../../auth/AuthContext';
 import { ForgotPasswordModal } from './ForgotPasswordModal';
 
@@ -32,7 +32,7 @@ export function LoginScreen({ onGoRegister }: { onGoRegister: () => void }) {
           <PasswordField value={password} onChangeText={setPassword} placeholder="••••••••" />
         </View>
 
-        {error ? <Text style={{ color: colors.red, fontWeight: '800', fontSize: 12 }}>{error}</Text> : null}
+        {error ? <Text style={{ color: colors.red, fontFamily: fontFamily.extrabold, fontSize: 12 }}>{error}</Text> : null}
 
         <PrimaryButton
           title={loading ? 'Logging in…' : 'Login'}
@@ -47,11 +47,11 @@ export function LoginScreen({ onGoRegister }: { onGoRegister: () => void }) {
         />
 
         <Pressable onPress={() => setForgotOpen(true)} style={{ alignSelf: 'center', marginTop: 6 }}>
-          <Text style={{ color: 'rgba(233,238,243,0.65)', fontWeight: '800' }}>Forgot password?</Text>
+          <Text style={{ color: 'rgba(233,238,243,0.65)', fontFamily: fontFamily.extrabold }}>Forgot password?</Text>
         </Pressable>
 
         <Pressable onPress={onGoRegister} style={{ alignSelf: 'center', marginTop: 8 }}>
-          <Text style={{ color: colors.cyan2, fontWeight: '900' }}>Create an account</Text>
+          <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black }}>Create an account</Text>
         </Pressable>
       </View>
 
