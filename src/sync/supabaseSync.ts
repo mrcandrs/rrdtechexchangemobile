@@ -8,6 +8,9 @@ type RemoteRow = {
   updated_at: number;
 };
 
+// Shared workspace scope for all authenticated app users.
+const SHARED_SCOPE_ID = 'shared';
+
 function nowMs() {
   return Date.now();
 }
@@ -27,22 +30,23 @@ async function deleteMissingRows(table: 'expenses' | 'budgets' | 'challenges', u
 }
 
 export async function pushAllToSupabase(userId: string, data: AppData): Promise<void> {
+  void userId;
   const updated_at = nowMs();
 
   const expenses = data.expenses.map((e) => ({
-    user_id: userId,
+    user_id: SHARED_SCOPE_ID,
     id: e.id,
     payload: e,
     updated_at,
   }));
   const budgets = data.budgets.map((b) => ({
-    user_id: userId,
+    user_id: SHARED_SCOPE_ID,
     id: b.id,
     payload: b,
     updated_at,
   }));
   const challenges = data.challenges.map((c) => ({
-    user_id: userId,
+    user_id: SHARED_SCOPE_ID,
     id: c.id,
     payload: c,
     updated_at,
@@ -52,31 +56,32 @@ export async function pushAllToSupabase(userId: string, data: AppData): Promise<
   if (a.error) throw a.error;
   await deleteMissingRows(
     'expenses',
-    userId,
+    SHARED_SCOPE_ID,
     expenses.map((x) => x.id),
   );
   const b = await supabase.from('budgets').upsert(budgets, { onConflict: 'user_id,id' });
   if (b.error) throw b.error;
   await deleteMissingRows(
     'budgets',
-    userId,
+    SHARED_SCOPE_ID,
     budgets.map((x) => x.id),
   );
   const c = await supabase.from('challenges').upsert(challenges, { onConflict: 'user_id,id' });
   if (c.error) throw c.error;
   await deleteMissingRows(
     'challenges',
-    userId,
+    SHARED_SCOPE_ID,
     challenges.map((x) => x.id),
   );
 }
 
 export async function pullAllFromSupabase(userId: string): Promise<AppData> {
-  const exp = await supabase.from('expenses').select('*').eq('user_id', userId);
+  void userId;
+  const exp = await supabase.from('expenses').select('*').eq('user_id', SHARED_SCOPE_ID);
   if (exp.error) throw exp.error;
-  const bud = await supabase.from('budgets').select('*').eq('user_id', userId);
+  const bud = await supabase.from('budgets').select('*').eq('user_id', SHARED_SCOPE_ID);
   if (bud.error) throw bud.error;
-  const chl = await supabase.from('challenges').select('*').eq('user_id', userId);
+  const chl = await supabase.from('challenges').select('*').eq('user_id', SHARED_SCOPE_ID);
   if (chl.error) throw chl.error;
 
   const expenses = (exp.data as RemoteRow[]).map((r) => r.payload) as AppData['expenses'];
