@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme';
 
 type FeedbackType = 'success' | 'error' | 'info';
@@ -13,6 +14,7 @@ const FeedbackContext = createContext<FeedbackContextValue | null>(null);
 export function FeedbackProvider({ children }: { children: React.ReactNode }) {
   const [message, setMessage] = useState<{ text: string; type: FeedbackType } | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const insets = useSafeAreaInsets();
 
   const value = useMemo<FeedbackContextValue>(() => {
     return {
@@ -43,7 +45,7 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
             position: 'absolute',
             left: 16,
             right: 16,
-            bottom: 26,
+            bottom: Math.max(26, insets.bottom + 88),
             borderRadius: 12,
             paddingHorizontal: 14,
             paddingVertical: 12,

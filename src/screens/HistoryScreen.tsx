@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
 import type { ExpenseCategory } from '../data/types';
@@ -157,21 +157,33 @@ export function HistoryScreen({
                         <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11 }}>
                           {e.category} • {e.paymentMethod}
                         </Text>
+                        <Text style={{ color: 'rgba(233,238,243,0.35)', fontWeight: '800', fontSize: 10, marginTop: 2 }}>
+                          Added by {e.createdByName || 'Unknown'}
+                        </Text>
                       </View>
                     </View>
                     <View style={{ alignItems: 'flex-end', gap: 8 }}>
                       <Text style={{ color: colors.text, fontWeight: '900' }}>-{formatPeso(e.amount).slice(1)}</Text>
                       {canModifyAll ? (
                         <Pressable
-                          onPress={async () => {
-                            try {
-                              await deleteExpense(e.id);
-                              onDeleteExpense?.(e.id);
-                              showMessage('Expense deleted.', 'success');
-                            } catch (e2) {
-                              const msg = e2 instanceof Error ? e2.message : 'Unable to delete expense.';
-                              showMessage(msg, 'error');
-                            }
+                          onPress={() => {
+                            Alert.alert('Delete expense?', `Are you sure you want to delete "${e.title}"?`, [
+                              { text: 'Cancel', style: 'cancel' },
+                              {
+                                text: 'Delete',
+                                style: 'destructive',
+                                onPress: async () => {
+                                  try {
+                                    await deleteExpense(e.id);
+                                    onDeleteExpense?.(e.id);
+                                    showMessage('Expense deleted.', 'success');
+                                  } catch (e2) {
+                                    const msg = e2 instanceof Error ? e2.message : 'Unable to delete expense.';
+                                    showMessage(msg, 'error');
+                                  }
+                                },
+                              },
+                            ]);
                           }}
                           hitSlop={10}
                           style={({ pressed }) => ({ opacity: pressed ? 0.75 : 1 })}

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
 import { colors } from '../theme';
@@ -151,14 +151,23 @@ export function BudgetScreen() {
                           <MaterialCommunityIcons name="pencil-outline" size={18} color="rgba(233,238,243,0.55)" />
                         </Pressable>
                         <Pressable
-                          onPress={async () => {
-                            try {
-                              await deleteBudget(b.id);
-                              showMessage('Budget deleted.', 'success');
-                            } catch (e) {
-                              const msg = e instanceof Error ? e.message : 'Unable to delete budget.';
-                              showMessage(msg, 'error');
-                            }
+                          onPress={() => {
+                            Alert.alert('Delete budget?', `Are you sure you want to delete the ${b.category} budget?`, [
+                              { text: 'Cancel', style: 'cancel' },
+                              {
+                                text: 'Delete',
+                                style: 'destructive',
+                                onPress: async () => {
+                                  try {
+                                    await deleteBudget(b.id);
+                                    showMessage('Budget deleted.', 'success');
+                                  } catch (e) {
+                                    const msg = e instanceof Error ? e.message : 'Unable to delete budget.';
+                                    showMessage(msg, 'error');
+                                  }
+                                },
+                              },
+                            ]);
                           }}
                           hitSlop={10}
                         >

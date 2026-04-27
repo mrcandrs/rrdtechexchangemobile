@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
 import { colors } from '../theme';
@@ -96,14 +96,23 @@ export function ChallengesScreen() {
                   </View>
                   {canModifyAll ? (
                     <Pressable
-                      onPress={async () => {
-                        try {
-                          await deleteChallenge(c.id);
-                          showMessage('Challenge deleted.', 'success');
-                        } catch (e) {
-                          const msg = e instanceof Error ? e.message : 'Unable to delete challenge.';
-                          showMessage(msg, 'error');
-                        }
+                      onPress={() => {
+                        Alert.alert('Delete challenge?', `Are you sure you want to delete "${c.title}"?`, [
+                          { text: 'Cancel', style: 'cancel' },
+                          {
+                            text: 'Delete',
+                            style: 'destructive',
+                            onPress: async () => {
+                              try {
+                                await deleteChallenge(c.id);
+                                showMessage('Challenge deleted.', 'success');
+                              } catch (e) {
+                                const msg = e instanceof Error ? e.message : 'Unable to delete challenge.';
+                                showMessage(msg, 'error');
+                              }
+                            },
+                          },
+                        ]);
                       }}
                       hitSlop={10}
                     >

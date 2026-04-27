@@ -9,6 +9,7 @@ import { useAuth } from '../../auth/AuthContext';
 
 export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
   const { signUp } = useAuth();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -16,8 +17,8 @@ export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
   const [loading, setLoading] = useState(false);
 
   const canSubmit = useMemo(() => {
-    return email.trim() && password.length >= 6 && password === confirm;
-  }, [confirm, email, password]);
+    return name.trim().length >= 2 && email.trim() && password.length >= 6 && password === confirm;
+  }, [confirm, email, name, password]);
 
   return (
     <AuthShell>
@@ -25,6 +26,11 @@ export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
       <P style={{ marginTop: 6 }}>Register to sync your data with Supabase.</P>
 
       <View style={{ marginTop: 16, gap: 12 }}>
+        <View>
+          <FieldLabel>NAME</FieldLabel>
+          <TextField value={name} onChangeText={setName} placeholder="Your name" />
+        </View>
+
         <View>
           <FieldLabel>EMAIL</FieldLabel>
           <TextField value={email} onChangeText={setEmail} placeholder="you@example.com" />
@@ -54,7 +60,7 @@ export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
           onPress={async () => {
             setLoading(true);
             setError(null);
-            const res = await signUp(email.trim(), password);
+            const res = await signUp(email.trim(), password, name.trim());
             setLoading(false);
             if (!res.ok) {
               setError(res.message);

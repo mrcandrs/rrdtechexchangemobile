@@ -10,7 +10,7 @@ type DataContextValue = {
   isSyncing: boolean;
   lastSyncError: string | null;
   syncNow: () => Promise<void>;
-  addExpense: (e: Omit<Expense, 'id' | 'createdAt'>) => Promise<void>;
+  addExpense: (e: Omit<Expense, 'id' | 'createdAt' | 'createdByUserId' | 'createdByName'>) => Promise<void>;
   deleteExpense: (id: string) => Promise<void>;
   addBudget: (b: Omit<Budget, 'id' | 'createdAt'>) => Promise<void>;
   updateBudget: (b: Budget) => Promise<void>;
@@ -24,7 +24,7 @@ const DataContext = createContext<DataContextValue | null>(null);
 const emptyData: AppData = { expenses: [], budgets: [], challenges: [] };
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
-  const { user, canInputExpenses, canModifyAll } = useAuth();
+  const { user, canInputExpenses, canModifyAll, displayName } = useAuth();
   const [data, setData] = useState<AppData>(emptyData);
   const [isHydrated, setIsHydrated] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -113,7 +113,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       syncNow,
       addExpense: async (e) => {
         if (!canInputExpenses) throw new Error('Only authorized users can add expenses.');
-        const exp = createExpense(e);
+        const userId = user?.id;
+        if (!userId) throw new Error('Not signed in.');
+        const exp = createExpense({ ...e, createdByUserId: userId, createdByName: displayName });
         await commit({ ...data, expenses: [exp, ...data.expenses] });
       },
       deleteExpense: async (id) => {
@@ -144,7 +146,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         await commit({ ...data, challenges: data.challenges.filter((x) => x.id !== id) });
       },
     };
-  }, [canInputExpenses, canModifyAll, data, isHydrated, isSyncing, lastSyncError, user?.id]);
+  }, [canInputExpenses, canModifyAll, data, displayName, isHydrated, isSyncing, lastSyncError, user?.id]);
 
   return <DataContext.Provider value={api}>{children}</DataContext.Provider>;
 }

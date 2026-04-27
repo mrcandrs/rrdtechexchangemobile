@@ -14,6 +14,8 @@ export type Expense = {
   amount: number; // positive number
   occurredAtISO: string; // YYYY-MM-DD
   createdAt: number;
+  createdByUserId: string;
+  createdByName: string;
 };
 
 export type Budget = {

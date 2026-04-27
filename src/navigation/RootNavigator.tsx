@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../auth/AuthContext';
 import { AppNavigator } from './AppNavigator';
 import { LoginScreen } from '../screens/auth/LoginScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
+import { SplashScreen } from '../screens/SplashScreen';
 
 export type RootStackParamList = {
   AuthLogin: undefined;
@@ -16,10 +17,16 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export function RootNavigator() {
   const { user, isHydrated } = useAuth();
   const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login');
+  const [minSplashDone, setMinSplashDone] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMinSplashDone(true), 900);
+    return () => clearTimeout(t);
+  }, []);
 
   // Keep it simple: show auth until session known.
-  if (!isHydrated) {
-    return null;
+  if (!isHydrated || !minSplashDone) {
+    return <SplashScreen />;
   }
 
   if (!user) {

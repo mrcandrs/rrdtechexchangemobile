@@ -7,11 +7,13 @@ type AuthValue = {
   isHydrated: boolean;
   session: Session | null;
   user: User | null;
+  displayName: string;
   role: AppRole;
   canInputExpenses: boolean;
   canModifyAll: boolean;
   signIn: (email: string, password: string) => Promise<{ ok: true } | { ok: false; message: string }>;
-  signUp: (email: string, password: string) => Promise<{ ok: true } | { ok: false; message: string }>;
+  signUp: (email: string, password: string, name: string) => Promise<{ ok: true } | { ok: false; message: string }>;
+  updateProfileName: (name: string) => Promise<{ ok: true } | { ok: false; message: string }>;
   resetPassword: (email: string) => Promise<{ ok: true } | { ok: false; message: string }>;
   signOut: () => Promise<void>;
 };
@@ -70,10 +72,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [session?.user?.email]);
 
   const value = useMemo<AuthValue>(() => {
+    const fallbackName = (() => {
+      const email = session?.user?.email ?? '';
+      if (!email.includes('@')) return 'User';
+      return email.split('@')[0];
+    })();
+    const metadataName = session?.user?.user_metadata?.full_name;
+    const displayName =
+      typeof metadataName === 'string' && metadataName.trim().length > 0 ? metadataName.trim() : fallbackName;
+
     return {
       isHydrated,
       session,
       user: session?.user ?? null,
+      displayName,
       role,
       canInputExpenses: role === 'main_admin' || role === 'member',
       canModifyAll: role === 'main_admin',
@@ -85,12 +97,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setRole(access.role);
         return { ok: true };
       },
-      signUp: async (email, password) => {
+      signUp: async (email, password, name) => {
         const access = await validateEmailAccess(email);
         if (!access.ok) return access;
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name.trim(),
+            },
+          },
+        });
         if (error) return { ok: false, message: error.message };
         setRole(access.role);
+        return { ok: true };
+      },
+      updateProfileName: async (name) => {
+        const trimmed = name.trim();
+        if (!trimmed) return { ok: false, message: 'Name cannot be empty.' };
+        const res = await supabase.auth.updateUser({
+          data: {
+            full_name: trimmed,
+          },
+        });
+        if (res.error) return { ok: false, message: res.error.message };
+        const refreshed = await supabase.auth.getSession();
+        if (refreshed.data.session) setSession(refreshed.data.session);
         return { ok: true };
       },
       resetPassword: async (email) => {

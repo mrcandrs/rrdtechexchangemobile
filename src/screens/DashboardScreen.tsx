@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useData } from '../data/DataContext';
 import { colors } from '../theme';
@@ -9,11 +9,19 @@ import { formatPeso } from '../utils/money';
 import { countThisMonth, sumThisMonth, sumToday, topCategoriesThisMonth, weekBars } from '../constants/stats';
 import { CategoryIcon } from '../icons/category';
 import { useAuth } from '../auth/AuthContext';
+import { ModalShell } from '../components/ModalShell';
+import { FieldLabel, TextField } from '../components/Inputs';
+import { PrimaryButton } from '../components/Button';
+import { useFeedback } from '../feedback/FeedbackContext';
 
 export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
   const { data } = useData();
-  const { signOut } = useAuth();
+  const { signOut, displayName, role, updateProfileName } = useAuth();
+  const { showMessage } = useFeedback();
   const now = new Date();
+  const [editNameOpen, setEditNameOpen] = React.useState(false);
+  const [newName, setNewName] = React.useState(displayName);
+  const [savingName, setSavingName] = React.useState(false);
 
   const thisMonth = useMemo(() => sumThisMonth(data.expenses, now), [data.expenses]);
   const today = useMemo(() => sumToday(data.expenses, now), [data.expenses]);
@@ -30,9 +38,25 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
         <View>
           <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 10, letterSpacing: 0.8 }}>RRD TECH EXCHANGE</Text>
           <H1 style={{ marginTop: 4 }}>Expense Tracker</H1>
+          <Pressable
+            onPress={() => {
+              setNewName(displayName);
+              setEditNameOpen(true);
+            }}
+            style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, marginTop: 4 })}
+          >
+            <Text style={{ color: colors.text2, fontWeight: '700', fontSize: 11 }}>
+              {displayName} • {role === 'main_admin' ? 'Main Admin' : 'Member'} • Edit
+            </Text>
+          </Pressable>
         </View>
         <Pressable
-          onPress={() => signOut()}
+          onPress={() => {
+            Alert.alert('Log out?', 'Are you sure you want to log out?', [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Log out', style: 'destructive', onPress: () => signOut() },
+            ]);
+          }}
           hitSlop={10}
           style={({ pressed }) => ({
             width: 36,
@@ -219,13 +243,39 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
               </View>
               <View>
                 <Text style={{ color: colors.text, fontWeight: '800' }}>{e.title}</Text>
-                <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11 }}>{e.occurredAtISO}</Text>
+                <Text style={{ color: colors.text3, fontWeight: '800', fontSize: 11 }}>
+                  {e.occurredAtISO} • {e.createdByName || 'Unknown'}
+                </Text>
               </View>
             </View>
             <Text style={{ color: colors.text, fontWeight: '900' }}>-{formatPeso(e.amount).slice(1)}</Text>
           </View>
         ))}
       </GlassCard>
+
+      <ModalShell visible={editNameOpen} title="Edit Profile Name" onClose={() => setEditNameOpen(false)} width={360}>
+        <View style={{ gap: 12 }}>
+          <View>
+            <FieldLabel>NAME</FieldLabel>
+            <TextField value={newName} onChangeText={setNewName} placeholder="Your name" />
+          </View>
+          <PrimaryButton
+            title={savingName ? 'Saving…' : 'Save Name'}
+            disabled={savingName || newName.trim().length < 2}
+            onPress={async () => {
+              setSavingName(true);
+              const res = await updateProfileName(newName);
+              setSavingName(false);
+              if (!res.ok) {
+                showMessage(res.message, 'error');
+                return;
+              }
+              showMessage('Profile name updated.', 'success');
+              setEditNameOpen(false);
+            }}
+          />
+        </View>
+      </ModalShell>
     </ScrollView>
   );
 }
