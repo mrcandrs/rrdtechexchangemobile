@@ -1,0 +1,75 @@
+import React, { useMemo, useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
+import { AuthShell } from './AuthShell';
+import { H1, P } from '../../components/Text';
+import { FieldLabel, PasswordField, TextField } from '../../components/Inputs';
+import { PrimaryButton } from '../../components/Button';
+import { colors } from '../../theme';
+import { useAuth } from '../../auth/AuthContext';
+
+export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
+  const { signUp } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const canSubmit = useMemo(() => {
+    return email.trim() && password.length >= 6 && password === confirm;
+  }, [confirm, email, password]);
+
+  return (
+    <AuthShell>
+      <H1 style={{ fontSize: 22 }}>Create account</H1>
+      <P style={{ marginTop: 6 }}>Register to sync your data with Supabase.</P>
+
+      <View style={{ marginTop: 16, gap: 12 }}>
+        <View>
+          <FieldLabel>EMAIL</FieldLabel>
+          <TextField value={email} onChangeText={setEmail} placeholder="you@example.com" />
+        </View>
+
+        <View>
+          <FieldLabel>PASSWORD</FieldLabel>
+          <PasswordField value={password} onChangeText={setPassword} placeholder="Min 6 characters" />
+        </View>
+
+        <View>
+          <FieldLabel>CONFIRM PASSWORD</FieldLabel>
+          <PasswordField value={confirm} onChangeText={setConfirm} placeholder="Repeat password" />
+        </View>
+
+        {password && password.length < 6 ? (
+          <Text style={{ color: colors.orange, fontWeight: '800', fontSize: 12 }}>Password should be at least 6 characters.</Text>
+        ) : null}
+        {confirm && confirm !== password ? (
+          <Text style={{ color: colors.orange, fontWeight: '800', fontSize: 12 }}>Passwords do not match.</Text>
+        ) : null}
+        {error ? <Text style={{ color: colors.red, fontWeight: '800', fontSize: 12 }}>{error}</Text> : null}
+
+        <PrimaryButton
+          title={loading ? 'Creating…' : 'Register'}
+          disabled={loading || !canSubmit}
+          onPress={async () => {
+            setLoading(true);
+            setError(null);
+            const res = await signUp(email.trim(), password);
+            setLoading(false);
+            if (!res.ok) {
+              setError(res.message);
+              return;
+            }
+            // Many projects require email confirmation; keep user informed.
+            setError('Account created. If email confirmation is enabled, check your inbox before logging in.');
+          }}
+        />
+
+        <Pressable onPress={onGoLogin} style={{ alignSelf: 'center', marginTop: 8 }}>
+          <Text style={{ color: colors.cyan2, fontWeight: '900' }}>Back to login</Text>
+        </Pressable>
+      </View>
+    </AuthShell>
+  );
+}
+
