@@ -16,7 +16,7 @@ import { useFeedback } from '../feedback/FeedbackContext';
 
 export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
   const { data } = useData();
-  const { signOut, displayName, role, updateProfileName } = useAuth();
+  const { signOut, displayName, updateProfileName } = useAuth();
   const { showMessage } = useFeedback();
   const now = new Date();
   const [editNameOpen, setEditNameOpen] = React.useState(false);
@@ -31,26 +31,41 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
 
   const maxBar = Math.max(1, ...bars.map((b) => b.total));
   const recent = data.expenses.slice(0, 6);
+  const thisMonthProgress = Math.max(8, Math.min(100, Math.round((today / Math.max(thisMonth, 1)) * 100)));
+  const initials = (displayName || 'U')
+    .split(' ')
+    .map((s) => s[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <ScrollView contentContainerStyle={{ padding: 18, paddingBottom: 140 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <View>
-          <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 10, letterSpacing: 0.8 }}>
-            RRD TECH EXCHANGE
-          </Text>
-          <H1 style={{ marginTop: 4 }}>Expense Tracker</H1>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
           <Pressable
             onPress={() => {
               setNewName(displayName);
               setEditNameOpen(true);
             }}
-            style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, marginTop: 4 })}
+            style={({ pressed }) => ({
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(255,255,255,0.09)',
+              borderWidth: 1,
+              borderColor: colors.border2,
+              opacity: pressed ? 0.85 : 1,
+            })}
           >
-            <Text style={{ color: colors.text2, fontFamily: fontFamily.bold, fontSize: 11 }}>
-              {displayName} • {role === 'main_admin' ? 'Main Admin' : 'Member'} • Edit
-            </Text>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 14 }}>{initials}</Text>
           </Pressable>
+          <View style={{ marginLeft: 10, flex: 1 }}>
+            <Text style={{ color: colors.text2, fontFamily: fontFamily.medium, fontSize: 14 }}>Welcome back,</Text>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 22 }}>{displayName}</Text>
+          </View>
         </View>
         <Pressable
           onPress={() => {
@@ -61,8 +76,8 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
           }}
           hitSlop={10}
           style={({ pressed }) => ({
-            width: 36,
-            height: 36,
+            width: 38,
+            height: 38,
             borderRadius: 12,
             alignItems: 'center',
             justifyContent: 'center',
@@ -71,76 +86,55 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
             backgroundColor: pressed ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
           })}
         >
-          <MaterialCommunityIcons name="logout" size={18} color="rgba(233,238,243,0.7)" />
+          <MaterialCommunityIcons name="logout-variant" size={18} color="rgba(233,238,243,0.8)" />
         </Pressable>
       </View>
 
       <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
-        <GlassCard style={{ flex: 1 }}>
+        <GlassCard style={{ flex: 1 }} padding={14}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Label>THIS MONTH</Label>
-            <View
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: 6,
-                backgroundColor: 'rgba(18,214,230,0.14)',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderWidth: 1,
-                borderColor: 'rgba(18,214,230,0.25)',
-              }}
-            >
-              <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 10 }}>₱</Text>
-            </View>
+            <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 12 }}>This Month</Text>
+            <MaterialCommunityIcons name="calendar-month-outline" size={17} color="rgba(233,238,243,0.45)" />
           </View>
-          <H2 style={{ marginTop: 6 }}>{formatPeso(thisMonth)}</H2>
-          <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 10, marginTop: 4 }}>0</Text>
+          <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 26, marginTop: 8 }}>
+            {formatPeso(thisMonth)}
+          </Text>
+          <View
+            style={{
+              height: 8,
+              borderRadius: 999,
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              marginTop: 10,
+              overflow: 'hidden',
+            }}
+          >
+            <View style={{ width: `${thisMonthProgress}%`, height: 8, borderRadius: 999, backgroundColor: colors.cyan2 }} />
+          </View>
         </GlassCard>
 
-        <GlassCard style={{ flex: 1 }}>
+        <GlassCard style={{ flex: 1 }} padding={14}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Label>TODAY</Label>
-            <View
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: 6,
-                backgroundColor: 'rgba(18,214,230,0.14)',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderWidth: 1,
-                borderColor: 'rgba(18,214,230,0.25)',
-              }}
-            >
-              <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 10 }}>≡</Text>
-            </View>
+            <Text style={{ color: colors.text2, fontFamily: fontFamily.black, fontSize: 12 }}>Today</Text>
+            <MaterialCommunityIcons name="wallet-outline" size={16} color="rgba(233,238,243,0.45)" />
           </View>
-          <H2 style={{ marginTop: 6 }}>{formatPeso(today)}</H2>
-          <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 10, marginTop: 4 }}> </Text>
+          <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 26, marginTop: 8 }}>
+            {formatPeso(today)}
+          </Text>
+          <Text style={{ color: colors.text3, fontFamily: fontFamily.bold, marginTop: 10, fontSize: 11 }}>
+            {txCount} transactions this month
+          </Text>
         </GlassCard>
       </View>
 
-      <GlassCard style={{ marginTop: 12, borderColor: 'rgba(18,214,230,0.25)' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-          <View
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 10,
-              backgroundColor: 'rgba(18,214,230,0.14)',
-              borderWidth: 1,
-              borderColor: 'rgba(18,214,230,0.22)',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+      <GlassCard style={{ marginTop: 12, borderRadius: 14 }} padding={14}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ color: colors.text2, fontFamily: fontFamily.medium, fontSize: 17 }}>Total Transactions: {txCount}</Text>
+          <Pressable
+            onPress={onSeeAll}
+            style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1, padding: 4 })}
           >
-            <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black }}>⎘</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <P>Total Transactions</P>
-            <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold, marginTop: 2 }}>{txCount} this month</Text>
-          </View>
+            <MaterialCommunityIcons name="chevron-right" size={18} color="rgba(233,238,243,0.55)" />
+          </Pressable>
         </View>
       </GlassCard>
 
@@ -162,102 +156,53 @@ export function DashboardScreen({ onSeeAll }: { onSeeAll: () => void }) {
         </View>
       </GlassCard>
 
-      <GlassCard style={{ marginTop: 12 }}>
-        <H2>Top Categories</H2>
-        <View style={{ height: 10 }} />
-        {topCats.map((c) => {
-          const total = c.total;
-          const denom = Math.max(1, topCats.reduce((acc, x) => acc + x.total, 0));
-          const pct = Math.round((total / denom) * 100);
-          return (
-            <View key={c.category} style={{ marginTop: 10 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <View
-                    style={{
-                      width: 26,
-                      height: 26,
-                      borderRadius: 10,
-                      backgroundColor: 'rgba(255,255,255,0.04)',
-                      borderWidth: 1,
-                      borderColor: colors.border,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <CategoryIcon category={c.category} size={14} color="rgba(233,238,243,0.7)" />
-                  </View>
-                  <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold }}>{c.category}</Text>
+      <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+        <GlassCard style={{ flex: 1 }} padding={14}>
+          <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 18 }}>Top Categories</Text>
+          <View style={{ marginTop: 10, gap: 12 }}>
+            {topCats.slice(0, 3).map((c) => (
+              <View key={c.category} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 10,
+                    backgroundColor: 'rgba(18,214,230,0.14)',
+                    borderWidth: 1,
+                    borderColor: 'rgba(18,214,230,0.2)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <CategoryIcon category={c.category} size={15} color={colors.cyan2} />
                 </View>
-                <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                  <Text style={{ color: colors.text, fontFamily: fontFamily.black }}>{formatPeso(total)}</Text>
-                  <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, width: 34, textAlign: 'right' }}>
-                    {pct}%
-                  </Text>
-                </View>
+                <Text style={{ color: colors.text2, fontFamily: fontFamily.bold, fontSize: 14 }}>{c.category}</Text>
               </View>
-              <View
-                style={{
-                  height: 4,
-                  backgroundColor: 'rgba(255,255,255,0.06)',
-                  borderRadius: 999,
-                  marginTop: 8,
-                  overflow: 'hidden',
-                }}
-              >
-                <View style={{ width: `${pct}%`, height: 4, backgroundColor: colors.cyan2 }} />
-              </View>
-            </View>
-          );
-        })}
-      </GlassCard>
-
-      <GlassCard style={{ marginTop: 12 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <H2>Recent Expenses</H2>
-          <Pressable onPress={onSeeAll}>
-            <Text style={{ color: colors.cyan2, fontFamily: fontFamily.extrabold, fontSize: 12 }}>See all ›</Text>
-          </Pressable>
-        </View>
-        <View style={{ height: 10 }} />
-        {recent.map((e) => (
-          <View
-            key={e.id}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingVertical: 10,
-              borderBottomWidth: 1,
-              borderBottomColor: 'rgba(255,255,255,0.05)',
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <View
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 10,
-                  backgroundColor: 'rgba(255,255,255,0.04)',
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <CategoryIcon category={e.category} size={16} color="rgba(233,238,243,0.7)" />
-              </View>
-              <View>
-                <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold }}>{e.title}</Text>
-                <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
-                  {e.occurredAtISO} • {e.createdByName || 'Unknown'}
-                </Text>
-              </View>
-            </View>
-            <Text style={{ color: colors.text, fontFamily: fontFamily.black }}>-{formatPeso(e.amount).slice(1)}</Text>
+            ))}
           </View>
-        ))}
-      </GlassCard>
+        </GlassCard>
+
+        <GlassCard style={{ flex: 1 }} padding={14}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 18 }}>Recent Expenses</Text>
+            <Pressable onPress={onSeeAll}>
+              <Text style={{ color: colors.cyan2, fontFamily: fontFamily.extrabold, fontSize: 12 }}>All</Text>
+            </Pressable>
+          </View>
+          <View style={{ marginTop: 10, gap: 8 }}>
+            {recent.slice(0, 3).map((e) => (
+              <View key={e.id} style={{ borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.06)', paddingBottom: 8 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                  <Text numberOfLines={1} style={{ color: colors.text2, fontFamily: fontFamily.medium, fontSize: 13, flex: 1 }}>
+                    {e.title}
+                  </Text>
+                  <Text style={{ color: colors.text, fontFamily: fontFamily.bold, fontSize: 13 }}>-{formatPeso(e.amount).slice(1)}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </GlassCard>
+      </View>
 
       <ModalShell visible={editNameOpen} title="Edit Profile Name" onClose={() => setEditNameOpen(false)} width={360}>
         <View style={{ gap: 12 }}>

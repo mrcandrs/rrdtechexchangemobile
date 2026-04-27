@@ -31,13 +31,21 @@ export function BudgetScreen() {
 
   const totalSpent = useMemo(() => sumThisMonth(data.expenses, now), [data.expenses]);
   const totalLimit = useMemo(() => totalBudgetLimit(data.budgets), [data.budgets]);
+  const remaining = totalLimit - totalSpent;
+  const dailyLimit = useMemo(() => {
+    const daysLeft = Math.max(1, new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1);
+    return Math.max(0, (remaining > 0 ? remaining : 0) / daysLeft);
+  }, [now, remaining]);
 
   return (
     <>
       <ScrollView contentContainerStyle={{ padding: 18, paddingBottom: 140 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View>
+          <H1 style={{ fontSize: 24 }}>Smart Budget</H1>
+          <H1 style={{ fontSize: 24, marginTop: -4 }}>Management</H1>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
           <View>
-            <H1>Budget</H1>
             <P style={{ marginTop: 2 }}>{new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(now)}</P>
           </View>
           <Pressable
@@ -66,16 +74,17 @@ export function BudgetScreen() {
           </Pressable>
         </View>
 
-        <GlassCard style={{ marginTop: 16 }} padding={14}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <GlassCard style={{ marginTop: 12 }} padding={14}>
+          <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 16, textAlign: 'center' }}>Total Budget</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 8 }}>
             <View>
-              <Label>Total Spent</Label>
+              <Label>Spent</Label>
               <H2 style={{ marginTop: 4, fontSize: 26 }}>{formatPeso(totalSpent)}</H2>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
-              <Label>Budget</Label>
-              <Text style={{ color: colors.text3, fontFamily: fontFamily.black, fontSize: 14, marginTop: 6 }}>
-                {formatPeso(totalLimit)}
+              <Label style={{ color: colors.cyan2 }}>Remaining</Label>
+              <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 30, marginTop: 6 }}>
+                {formatPeso(Math.max(remaining, 0))}
               </Text>
             </View>
           </View>
@@ -91,21 +100,24 @@ export function BudgetScreen() {
           >
             <View
               style={{
-                width: `${Math.min(100, (totalLimit > 0 ? (totalSpent / totalLimit) * 100 : 0))}%`,
+                width: `${Math.min(100, totalLimit > 0 ? (totalSpent / totalLimit) * 100 : 0)}%`,
                 height: 10,
                 backgroundColor: totalLimit > 0 && totalSpent > totalLimit ? colors.red : 'rgba(18,214,230,0.9)',
               }}
             />
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10 }}>
-            <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
-              {totalLimit > 0 ? `${Math.round((totalSpent / totalLimit) * 100)}% used` : 'No budgets yet'}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+            <Text style={{ color: colors.text2, fontFamily: fontFamily.bold, fontSize: 12 }}>
+              Daily Limit ({formatPeso(dailyLimit)})
             </Text>
             {totalLimit > 0 && totalSpent > totalLimit ? (
-              <Text style={{ color: colors.red, fontFamily: fontFamily.black, fontSize: 11 }}>△ Over budget!</Text>
+              <Text style={{ color: colors.red, fontFamily: fontFamily.black, fontSize: 12 }}>Over budget</Text>
             ) : null}
           </View>
+          <Text style={{ color: colors.text3, fontFamily: fontFamily.medium, fontSize: 12, marginTop: 8 }}>
+            Projected spend: {formatPeso(totalSpent + dailyLimit * 30)} based on current spending pattern.
+          </Text>
         </GlassCard>
 
         <View style={{ marginTop: 14, gap: 10 }}>
@@ -146,9 +158,10 @@ export function BudgetScreen() {
                     </View>
 
                     {canModifyAll ? (
-                      <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                        <Pressable onPress={() => setEdit(b)} hitSlop={10}>
-                          <MaterialCommunityIcons name="pencil-outline" size={18} color="rgba(233,238,243,0.55)" />
+                      <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                        <Pressable onPress={() => setEdit(b)} hitSlop={10} style={{ alignItems: 'center' }}>
+                          <MaterialCommunityIcons name="pencil-outline" size={18} color={colors.cyan2} />
+                          <Text style={{ color: colors.cyan2, fontFamily: fontFamily.bold, fontSize: 11, marginTop: 2 }}>Edit</Text>
                         </Pressable>
                         <Pressable
                           onPress={() => {
@@ -170,8 +183,10 @@ export function BudgetScreen() {
                             ]);
                           }}
                           hitSlop={10}
+                          style={{ alignItems: 'center' }}
                         >
-                          <MaterialCommunityIcons name="trash-can-outline" size={18} color="rgba(233,238,243,0.55)" />
+                          <MaterialCommunityIcons name="trash-can-outline" size={18} color={colors.red} />
+                          <Text style={{ color: colors.red, fontFamily: fontFamily.bold, fontSize: 11, marginTop: 2 }}>Delete</Text>
                         </Pressable>
                       </View>
                     ) : null}

@@ -19,6 +19,7 @@ export function TextField({
   keyboardType,
   secureTextEntry,
   right,
+  accent,
 }: {
   value: string;
   onChangeText: (s: string) => void;
@@ -26,6 +27,7 @@ export function TextField({
   keyboardType?: 'default' | 'numeric';
   secureTextEntry?: boolean;
   right?: React.ReactNode;
+  accent?: boolean;
 }) {
   return (
     <View
@@ -33,8 +35,8 @@ export function TextField({
         height: 44,
         borderRadius: 10,
         borderWidth: 1,
-        borderColor: colors.border,
-        backgroundColor: 'rgba(255,255,255,0.03)',
+        borderColor: accent ? 'rgba(18,214,230,0.45)' : colors.border,
+        backgroundColor: accent ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.03)',
         paddingHorizontal: 12,
         flexDirection: 'row',
         alignItems: 'center',
@@ -59,10 +61,12 @@ export function PasswordField({
   value,
   onChangeText,
   placeholder,
+  accent,
 }: {
   value: string;
   onChangeText: (s: string) => void;
   placeholder?: string;
+  accent?: boolean;
 }) {
   const [visible, setVisible] = useState(false);
   return (
@@ -71,6 +75,7 @@ export function PasswordField({
       onChangeText={onChangeText}
       placeholder={placeholder}
       secureTextEntry={!visible}
+      accent={accent}
       right={
         <Pressable onPress={() => setVisible((v) => !v)} hitSlop={10} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
           <MaterialCommunityIcons

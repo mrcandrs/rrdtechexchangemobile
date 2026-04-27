@@ -55,18 +55,18 @@ export function HistoryScreen({
 
   return (
     <ScrollView contentContainerStyle={{ padding: 18, paddingBottom: 140 }}>
-      <H1>History</H1>
+      <H1 style={{ fontSize: 28 }}>History</H1>
 
       <View style={{ flexDirection: 'row', gap: 10, marginTop: 14, alignItems: 'center' }}>
         <View
           style={{
             flex: 1,
-            height: 40,
-            borderRadius: 12,
+            height: 46,
+            borderRadius: 14,
             borderWidth: 1,
             borderColor: colors.border,
-            backgroundColor: 'rgba(255,255,255,0.03)',
-            paddingHorizontal: 12,
+            backgroundColor: 'rgba(255,255,255,0.05)',
+            paddingHorizontal: 14,
             flexDirection: 'row',
             alignItems: 'center',
             gap: 8,
@@ -76,28 +76,28 @@ export function HistoryScreen({
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Search expenses..."
+            placeholder="Search transactions"
             placeholderTextColor="rgba(233,238,243,0.28)"
-            style={{ color: colors.text, fontFamily: fontFamily.bold, flex: 1 }}
+            style={{ color: colors.text, fontFamily: fontFamily.medium, flex: 1, fontSize: 15 }}
           />
         </View>
 
         <Pressable
           onPress={() => setCatOpen((v) => !v)}
           style={({ pressed }) => ({
-            height: 40,
-            borderRadius: 12,
+            height: 46,
+            borderRadius: 14,
             borderWidth: 1,
             borderColor: colors.border,
             backgroundColor: pressed ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
-            paddingHorizontal: 12,
+            paddingHorizontal: 14,
             flexDirection: 'row',
             alignItems: 'center',
             gap: 8,
           })}
         >
           <MaterialCommunityIcons name="filter-variant" size={16} color="rgba(233,238,243,0.6)" />
-          <Text style={{ color: colors.text, fontFamily: fontFamily.extrabold, fontSize: 12 }}>{cat}</Text>
+          <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 14 }}>Filter</Text>
           <MaterialCommunityIcons name="chevron-down" size={16} color="rgba(233,238,243,0.6)" />
         </Pressable>
       </View>
@@ -132,7 +132,9 @@ export function HistoryScreen({
       <View style={{ marginTop: 16, gap: 12 }}>
         {grouped.map((g) => (
           <View key={g.day}>
-            <Label style={{ marginBottom: 8 }}>{g.day.toUpperCase()}</Label>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.bold, fontSize: 16, marginBottom: 8 }}>
+              {g.day}
+            </Text>
             <View style={{ gap: 10 }}>
               {g.items.map((e) => (
                 <GlassCard key={e.id} padding={12}>
@@ -152,18 +154,20 @@ export function HistoryScreen({
                       >
                         <CategoryIcon category={e.category} size={18} color="rgba(233,238,243,0.75)" />
                       </View>
-                      <View>
-                        <H2 style={{ fontSize: 14 }}>{e.title}</H2>
-                        <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
-                          {e.category} • {e.paymentMethod}
+                      <View style={{ maxWidth: 190 }}>
+                        <H2 style={{ fontSize: 15 }}>{e.title}</H2>
+                        <Text style={{ color: colors.text3, fontFamily: fontFamily.bold, fontSize: 12 }}>
+                          {e.paymentMethod}
                         </Text>
-                        <Text style={{ color: 'rgba(233,238,243,0.35)', fontFamily: fontFamily.extrabold, fontSize: 10, marginTop: 2 }}>
+                        <Text style={{ color: 'rgba(233,238,243,0.35)', fontFamily: fontFamily.bold, fontSize: 10, marginTop: 2 }}>
                           Added by {e.createdByName || 'Unknown'}
                         </Text>
                       </View>
                     </View>
                     <View style={{ alignItems: 'flex-end', gap: 8 }}>
-                      <Text style={{ color: colors.text, fontFamily: fontFamily.black }}>-{formatPeso(e.amount).slice(1)}</Text>
+                      <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 15 }}>
+                        {formatPeso(e.amount)}
+                      </Text>
                       {canModifyAll ? (
                         <Pressable
                           onPress={() => {
@@ -188,7 +192,7 @@ export function HistoryScreen({
                           hitSlop={10}
                           style={({ pressed }) => ({ opacity: pressed ? 0.75 : 1 })}
                         >
-                          <MaterialCommunityIcons name="trash-can-outline" size={18} color="rgba(233,238,243,0.55)" />
+                          <MaterialCommunityIcons name="trash-can-outline" size={20} color="rgba(233,238,243,0.55)" />
                         </Pressable>
                       ) : null}
                     </View>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Switch, Text, View } from 'react-native';
 import { AuthShell } from './AuthShell';
 import { H1, P } from '../../components/Text';
 import { FieldLabel, PasswordField, TextField } from '../../components/Inputs';
@@ -15,6 +15,7 @@ export function LoginScreen({ onGoRegister }: { onGoRegister: () => void }) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
   return (
     <AuthShell withCard={false}>
@@ -24,31 +25,40 @@ export function LoginScreen({ onGoRegister }: { onGoRegister: () => void }) {
           resizeMode="contain"
           style={{ width: 118, height: 118, borderRadius: 59, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' }}
         />
-        <H1 style={{ marginTop: 14, fontSize: 28, letterSpacing: 0.4 }}>EXPENSE TRACKER</H1>
-        <P style={{ marginTop: 6, textAlign: 'center' }}>Track daily spending with your team in one place.</P>
+        <H1 style={{ marginTop: 14, fontSize: 24, letterSpacing: 0.2 }}>EXPENSE TRACKER</H1>
       </View>
 
       <View
         style={{
           gap: 12,
-          borderRadius: 16,
+          borderRadius: 18,
           borderWidth: 1,
-          borderColor: colors.border,
-          backgroundColor: 'rgba(15,20,25,0.45)',
-          padding: 14,
+          borderColor: 'rgba(18,214,230,0.24)',
+          backgroundColor: 'rgba(10,14,18,0.56)',
+          padding: 16,
         }}
       >
         <View>
-          <FieldLabel>EMAIL</FieldLabel>
-          <TextField value={email} onChangeText={setEmail} placeholder="you@example.com" />
+          <FieldLabel>Email</FieldLabel>
+          <TextField value={email} onChangeText={setEmail} placeholder="you@example.com" accent />
         </View>
 
         <View>
-          <FieldLabel>PASSWORD</FieldLabel>
-          <PasswordField value={password} onChangeText={setPassword} placeholder="••••••••" />
+          <FieldLabel>Password</FieldLabel>
+          <PasswordField value={password} onChangeText={setPassword} placeholder="••••••••" accent />
         </View>
 
         {error ? <Text style={{ color: colors.red, fontFamily: fontFamily.extrabold, fontSize: 12 }}>{error}</Text> : null}
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 2 }}>
+          <Text style={{ color: colors.text2, fontFamily: fontFamily.medium, fontSize: 13 }}>Remember Me</Text>
+          <Switch
+            value={rememberMe}
+            onValueChange={setRememberMe}
+            trackColor={{ false: 'rgba(255,255,255,0.2)', true: 'rgba(18,214,230,0.4)' }}
+            thumbColor={rememberMe ? '#ffffff' : '#d4d7dc'}
+          />
+        </View>
 
         <PrimaryButton
           title={loading ? 'Logging in…' : 'Login'}
@@ -62,13 +72,15 @@ export function LoginScreen({ onGoRegister }: { onGoRegister: () => void }) {
           }}
         />
 
-        <Pressable onPress={() => setForgotOpen(true)} style={{ alignSelf: 'center', marginTop: 4 }}>
-          <Text style={{ color: 'rgba(233,238,243,0.65)', fontFamily: fontFamily.extrabold }}>Forgot password?</Text>
-        </Pressable>
-
-        <Pressable onPress={onGoRegister} style={{ alignSelf: 'center', marginTop: 2 }}>
-          <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black }}>Create an account</Text>
-        </Pressable>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 6 }}>
+          <Pressable onPress={() => setForgotOpen(true)}>
+            <Text style={{ color: 'rgba(233,238,243,0.72)', fontFamily: fontFamily.bold, fontSize: 13 }}>Forgot password?</Text>
+          </Pressable>
+          <Text style={{ color: 'rgba(233,238,243,0.3)', marginHorizontal: 14 }}>|</Text>
+          <Pressable onPress={onGoRegister}>
+            <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 13 }}>Create an account</Text>
+          </Pressable>
+        </View>
       </View>
 
       <ForgotPasswordModal visible={forgotOpen} onClose={() => setForgotOpen(false)} />

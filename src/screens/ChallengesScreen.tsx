@@ -59,25 +59,27 @@ export function ChallengesScreen() {
           </Pressable>
         </View>
 
-        <View style={{ flexDirection: 'row', gap: 12, marginTop: 16 }}>
-          <GlassCard style={{ flex: 1 }} padding={14}>
-            <MaterialCommunityIcons name="target" size={18} color={colors.cyan2} />
-            <H2 style={{ marginTop: 10 }}>{totals.total}</H2>
-            <P>Total</P>
+        <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
+          <GlassCard style={{ flex: 1, borderColor: 'rgba(255,216,77,0.5)' }} padding={14}>
+            <Text style={{ fontSize: 18 }}>🏆</Text>
+            <Text style={{ color: colors.text2, fontFamily: fontFamily.bold, marginTop: 4, fontSize: 12 }}>Total Challenges</Text>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 28, marginTop: 6 }}>{totals.total}</Text>
           </GlassCard>
-          <GlassCard style={{ flex: 1 }} padding={14}>
-            <MaterialCommunityIcons name="fire" size={18} color={colors.orange} />
-            <H2 style={{ marginTop: 10 }}>{totals.active}</H2>
-            <P>Active</P>
+          <GlassCard style={{ flex: 1, borderColor: 'rgba(0,229,255,0.5)' }} padding={14}>
+            <Text style={{ fontSize: 18 }}>⏱️</Text>
+            <Text style={{ color: colors.text2, fontFamily: fontFamily.bold, marginTop: 4, fontSize: 12 }}>Active Challenges</Text>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 28, marginTop: 6 }}>{totals.active}</Text>
           </GlassCard>
-          <GlassCard style={{ flex: 1 }} padding={14}>
-            <MaterialCommunityIcons name="trophy" size={18} color={colors.yellow} />
-            <H2 style={{ marginTop: 10 }}>{totals.won}</H2>
-            <P>Won</P>
+          <GlassCard style={{ flex: 1, borderColor: 'rgba(255,77,255,0.45)' }} padding={14}>
+            <Text style={{ fontSize: 18 }}>🥇</Text>
+            <Text style={{ color: colors.text2, fontFamily: fontFamily.bold, marginTop: 4, fontSize: 12 }}>Won Challenges</Text>
+            <Text style={{ color: colors.text, fontFamily: fontFamily.black, fontSize: 28, marginTop: 6 }}>{totals.won}</Text>
           </GlassCard>
         </View>
 
-        <Label style={{ marginTop: 16, marginBottom: 8 }}>ACTIVE CHALLENGES</Label>
+        <Text style={{ marginTop: 16, marginBottom: 8, color: colors.text, fontFamily: fontFamily.black, fontSize: 20 }}>
+          Active Challenges
+        </Text>
         <View style={{ gap: 10 }}>
           {data.challenges.map((c) => {
             const spent = challengeSpent(data.expenses, c);
@@ -86,14 +88,12 @@ export function ChallengesScreen() {
             const pct = Math.max(0, Math.min(100, Math.round(ratio * 100)));
             const over = remaining < 0;
             return (
-              <GlassCard key={c.id} padding={12}>
+              <GlassCard key={c.id} padding={14} style={{ backgroundColor: 'rgba(26,45,76,0.7)', borderColor: 'rgba(80,120,180,0.35)' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                   <View style={{ flex: 1, paddingRight: 8 }}>
                     <H2 style={{ fontSize: 14 }}>{c.title}</H2>
-                    <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11, marginTop: 2 }}>
-                      {c.category} • {c.period} • ends {c.endISO}
-                    </Text>
                   </View>
+                  <Text style={{ fontSize: 22 }}>{over ? '⚠️' : '🎯'}</Text>
                   {canModifyAll ? (
                     <Pressable
                       onPress={() => {
@@ -122,28 +122,42 @@ export function ChallengesScreen() {
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                  <Text style={{ color: colors.text3, fontFamily: fontFamily.extrabold, fontSize: 11 }}>
-                    {formatPeso(spent)} spent
-                  </Text>
-                  <Text style={{ color: over ? colors.red : colors.green, fontFamily: fontFamily.black, fontSize: 11 }}>
-                    {over ? `${formatPeso(Math.abs(remaining))} over limit!` : `${formatPeso(remaining)} remaining`}
+                  <Text style={{ color: colors.text2, fontFamily: fontFamily.bold, fontSize: 12 }}>
+                    Remaining:
+                    <Text style={{ color: over ? colors.red : colors.green, fontFamily: fontFamily.black }}>
+                      {' '}
+                      {over ? `${formatPeso(Math.abs(remaining))} (Over Budget)` : `${formatPeso(remaining)} (On Track)`}
+                    </Text>
                   </Text>
                 </View>
 
                 <View
                   style={{
-                    height: 6,
+                    height: 22,
                     borderRadius: 999,
-                    backgroundColor: 'rgba(255,255,255,0.06)',
+                    backgroundColor: 'rgba(8,18,48,0.9)',
                     marginTop: 10,
                     overflow: 'hidden',
+                    justifyContent: 'center',
                   }}
                 >
-                  <View style={{ width: `${Math.min(100, pct)}%`, height: 6, backgroundColor: over ? colors.red : colors.cyan2 }} />
+                  <View
+                    style={{
+                      width: `${Math.min(100, pct)}%`,
+                      height: 22,
+                      backgroundColor: over ? '#ff5b6d' : pct < 50 ? '#58d26a' : pct < 85 ? '#d3ef57' : '#12D6E6',
+                      borderRadius: 999,
+                      alignItems: 'flex-end',
+                      justifyContent: 'center',
+                      paddingRight: 8,
+                    }}
+                  >
+                    <Text style={{ color: '#041018', fontFamily: fontFamily.black, fontSize: 12 }}>{pct}%</Text>
+                  </View>
                 </View>
 
-                <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black, fontSize: 11, marginTop: 10 }}>
-                  {challengeIsActive(c, now) ? `In Progress • ends ${c.endISO}` : `Ended • ended ${c.endISO}`}
+                <Text style={{ color: colors.text2, fontFamily: fontFamily.medium, fontSize: 12, marginTop: 8 }}>
+                  {challengeIsActive(c, now) ? `Ends in ${daysLeft(now, c.endISO)} day(s)` : `Ended • ${c.endISO}`}
                 </Text>
               </GlassCard>
             );
@@ -154,5 +168,11 @@ export function ChallengesScreen() {
       <NewChallengeModal visible={open} onClose={() => setOpen(false)} />
     </>
   );
+}
+
+function daysLeft(now: Date, endISO: string) {
+  const end = new Date(`${endISO}T23:59:59`);
+  const diff = Math.ceil((end.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+  return Math.max(0, diff);
 }
 

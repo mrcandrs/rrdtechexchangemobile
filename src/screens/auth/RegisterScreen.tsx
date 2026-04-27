@@ -21,28 +21,37 @@ export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
   }, [confirm, email, name, password]);
 
   return (
-    <AuthShell>
+    <AuthShell withCard={false}>
+      <View
+        style={{
+          borderRadius: 18,
+          borderWidth: 1,
+          borderColor: 'rgba(255,255,255,0.08)',
+          backgroundColor: 'rgba(20,24,32,0.72)',
+          padding: 18,
+        }}
+      >
       <H1 style={{ fontSize: 22 }}>Create account</H1>
-      <P style={{ marginTop: 6 }}>Register to sync your data with Supabase.</P>
+      <P style={{ marginTop: 6 }}>Register to sync your data</P>
 
       <View style={{ marginTop: 16, gap: 12 }}>
         <View>
-          <FieldLabel>NAME</FieldLabel>
-          <TextField value={name} onChangeText={setName} placeholder="Your name" />
+          <FieldLabel>Name</FieldLabel>
+          <TextField value={name} onChangeText={setName} placeholder="Name" />
         </View>
 
         <View>
-          <FieldLabel>EMAIL</FieldLabel>
-          <TextField value={email} onChangeText={setEmail} placeholder="you@example.com" />
+          <FieldLabel>Email</FieldLabel>
+          <TextField value={email} onChangeText={setEmail} placeholder="Email" />
         </View>
 
         <View>
-          <FieldLabel>PASSWORD</FieldLabel>
-          <PasswordField value={password} onChangeText={setPassword} placeholder="Min 6 characters" />
+          <FieldLabel>Password</FieldLabel>
+          <PasswordField value={password} onChangeText={setPassword} placeholder="Password" />
         </View>
 
         <View>
-          <FieldLabel>CONFIRM PASSWORD</FieldLabel>
+          <FieldLabel>Confirm Password</FieldLabel>
           <PasswordField value={confirm} onChangeText={setConfirm} placeholder="Repeat password" />
         </View>
 
@@ -76,6 +85,7 @@ export function RegisterScreen({ onGoLogin }: { onGoLogin: () => void }) {
         <Pressable onPress={onGoLogin} style={{ alignSelf: 'center', marginTop: 8 }}>
           <Text style={{ color: colors.cyan2, fontFamily: fontFamily.black }}>Back to login</Text>
         </Pressable>
+      </View>
       </View>
     </AuthShell>
   );
