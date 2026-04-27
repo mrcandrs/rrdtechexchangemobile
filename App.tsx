@@ -4,15 +4,18 @@ import { DataProvider } from './src/data/DataContext';
 import { AuthProvider } from './src/auth/AuthContext';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { FeedbackProvider } from './src/feedback/FeedbackContext';
 
 export default function App() {
   return (
     <SafeAreaProvider>
-    <AuthProvider>
-      <DataProvider>
-        <RootNavigator />
-      </DataProvider>
-    </AuthProvider>
+      <FeedbackProvider>
+        <AuthProvider>
+          <DataProvider>
+            <RootNavigator />
+          </DataProvider>
+        </AuthProvider>
+      </FeedbackProvider>
     </SafeAreaProvider>
   );
 }

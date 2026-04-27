@@ -7,9 +7,11 @@ import { useData } from '../data/DataContext';
 import type { ChallengeCategory, Period } from '../data/types';
 import { challengeCategories, periods } from '../constants/categories';
 import { toISODate } from '../utils/dates';
+import { useFeedback } from '../feedback/FeedbackContext';
 
 export function NewChallengeModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { addChallenge } = useData();
+  const { showMessage } = useFeedback();
   const [title, setTitle] = useState('');
   const [limit, setLimit] = useState('');
   const [category, setCategory] = useState<ChallengeCategory>('All Spending');
@@ -71,21 +73,27 @@ export function NewChallengeModal({ visible, onClose }: { visible: boolean; onCl
           title="Start Challenge"
           disabled={!canSubmit}
           onPress={async () => {
-            await addChallenge({
-              title: title.trim(),
-              spendingLimit: Number(limit),
-              category,
-              period,
-              startISO,
-              endISO,
-            });
-            setTitle('');
-            setLimit('');
-            setCategory('All Spending');
-            setPeriod('Weekly');
-            setStartISO(toISODate(new Date()));
-            setEndISO(toISODate(new Date(Date.now() + 24 * 60 * 60 * 1000)));
-            onClose();
+            try {
+              await addChallenge({
+                title: title.trim(),
+                spendingLimit: Number(limit),
+                category,
+                period,
+                startISO,
+                endISO,
+              });
+              showMessage('Challenge created.', 'success');
+              setTitle('');
+              setLimit('');
+              setCategory('All Spending');
+              setPeriod('Weekly');
+              setStartISO(toISODate(new Date()));
+              setEndISO(toISODate(new Date(Date.now() + 24 * 60 * 60 * 1000)));
+              onClose();
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : 'Unable to create challenge.';
+              showMessage(msg, 'error');
+            }
           }}
         />
       </View>

@@ -8,9 +8,13 @@ import { H1, H2, Label, P } from '../components/Text';
 import { formatPeso } from '../utils/money';
 import { challengeIsActive, challengeIsWon, challengeSpent } from '../constants/stats';
 import { NewChallengeModal } from '../modals/NewChallengeModal';
+import { useAuth } from '../auth/AuthContext';
+import { useFeedback } from '../feedback/FeedbackContext';
 
 export function ChallengesScreen() {
   const { data, deleteChallenge } = useData();
+  const { canModifyAll } = useAuth();
+  const { showMessage } = useFeedback();
   const now = new Date();
   const [open, setOpen] = useState(false);
 
@@ -30,7 +34,13 @@ export function ChallengesScreen() {
             <P style={{ marginTop: 2 }}>Beat your spending goals</P>
           </View>
           <Pressable
-            onPress={() => setOpen(true)}
+            onPress={() => {
+              if (!canModifyAll) {
+                showMessage('Only the main admin can manage challenges.', 'error');
+                return;
+              }
+              setOpen(true);
+            }}
             style={({ pressed }) => ({
               height: 34,
               borderRadius: 10,
@@ -84,9 +94,22 @@ export function ChallengesScreen() {
                       {c.category} • {c.period} • ends {c.endISO}
                     </Text>
                   </View>
-                  <Pressable onPress={() => deleteChallenge(c.id)} hitSlop={10}>
-                    <MaterialCommunityIcons name="trash-can-outline" size={18} color="rgba(233,238,243,0.55)" />
-                  </Pressable>
+                  {canModifyAll ? (
+                    <Pressable
+                      onPress={async () => {
+                        try {
+                          await deleteChallenge(c.id);
+                          showMessage('Challenge deleted.', 'success');
+                        } catch (e) {
+                          const msg = e instanceof Error ? e.message : 'Unable to delete challenge.';
+                          showMessage(msg, 'error');
+                        }
+                      }}
+                      hitSlop={10}
+                    >
+                      <MaterialCommunityIcons name="trash-can-outline" size={18} color="rgba(233,238,243,0.55)" />
+                    </Pressable>
+                  ) : null}
                 </View>
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>

@@ -12,6 +12,20 @@ function nowMs() {
   return Date.now();
 }
 
+async function deleteMissingRows(table: 'expenses' | 'budgets' | 'challenges', userId: string, localIds: string[]): Promise<void> {
+  const existing = await supabase.from(table).select('id').eq('user_id', userId);
+  if (existing.error) throw existing.error;
+  const remoteIds = new Set<string>((existing.data ?? []).map((row: { id: string }) => row.id));
+  const localIdSet = new Set(localIds);
+  const idsToDelete: string[] = [];
+  for (const id of remoteIds) {
+    if (!localIdSet.has(id)) idsToDelete.push(id);
+  }
+  if (idsToDelete.length === 0) return;
+  const del = await supabase.from(table).delete().eq('user_id', userId).in('id', idsToDelete);
+  if (del.error) throw del.error;
+}
+
 export async function pushAllToSupabase(userId: string, data: AppData): Promise<void> {
   const updated_at = nowMs();
 
@@ -36,10 +50,25 @@ export async function pushAllToSupabase(userId: string, data: AppData): Promise<
 
   const a = await supabase.from('expenses').upsert(expenses, { onConflict: 'user_id,id' });
   if (a.error) throw a.error;
+  await deleteMissingRows(
+    'expenses',
+    userId,
+    expenses.map((x) => x.id),
+  );
   const b = await supabase.from('budgets').upsert(budgets, { onConflict: 'user_id,id' });
   if (b.error) throw b.error;
+  await deleteMissingRows(
+    'budgets',
+    userId,
+    budgets.map((x) => x.id),
+  );
   const c = await supabase.from('challenges').upsert(challenges, { onConflict: 'user_id,id' });
   if (c.error) throw c.error;
+  await deleteMissingRows(
+    'challenges',
+    userId,
+    challenges.map((x) => x.id),
+  );
 }
 
 export async function pullAllFromSupabase(userId: string): Promise<AppData> {

@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { AppData, Budget, Expense, SavingsChallenge } from './types';
-import { seedData } from './seed';
 
 const STORAGE_KEY = '@rrd_expense_tracker_v1';
 
@@ -21,9 +20,9 @@ export async function loadData(): Promise<AppData> {
   const raw = await AsyncStorage.getItem(STORAGE_KEY);
   const parsed = safeParse<AppData>(raw);
   if (parsed && parsed.expenses && parsed.budgets && parsed.challenges) return parsed;
-  const seeded = seedData(new Date());
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
-  return seeded;
+  const empty: AppData = { expenses: [], budgets: [], challenges: [] };
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(empty));
+  return empty;
 }
 
 export async function saveData(data: AppData): Promise<void> {

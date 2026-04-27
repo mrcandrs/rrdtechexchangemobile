@@ -9,6 +9,8 @@ import { H1, H2, Label } from '../components/Text';
 import { formatPeso } from '../utils/money';
 import { expenseCategories } from '../constants/categories';
 import { CategoryIcon } from '../icons/category';
+import { useAuth } from '../auth/AuthContext';
+import { useFeedback } from '../feedback/FeedbackContext';
 
 type FilterCat = 'All' | ExpenseCategory;
 
@@ -18,6 +20,8 @@ export function HistoryScreen({
   onDeleteExpense?: (id: string) => void;
 }) {
   const { data, deleteExpense } = useData();
+  const { canModifyAll } = useAuth();
+  const { showMessage } = useFeedback();
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<FilterCat>('All');
   const [catOpen, setCatOpen] = useState(false);
@@ -157,16 +161,24 @@ export function HistoryScreen({
                     </View>
                     <View style={{ alignItems: 'flex-end', gap: 8 }}>
                       <Text style={{ color: colors.text, fontWeight: '900' }}>-{formatPeso(e.amount).slice(1)}</Text>
-                      <Pressable
-                        onPress={async () => {
-                          await deleteExpense(e.id);
-                          onDeleteExpense?.(e.id);
-                        }}
-                        hitSlop={10}
-                        style={({ pressed }) => ({ opacity: pressed ? 0.75 : 1 })}
-                      >
-                        <MaterialCommunityIcons name="trash-can-outline" size={18} color="rgba(233,238,243,0.55)" />
-                      </Pressable>
+                      {canModifyAll ? (
+                        <Pressable
+                          onPress={async () => {
+                            try {
+                              await deleteExpense(e.id);
+                              onDeleteExpense?.(e.id);
+                              showMessage('Expense deleted.', 'success');
+                            } catch (e2) {
+                              const msg = e2 instanceof Error ? e2.message : 'Unable to delete expense.';
+                              showMessage(msg, 'error');
+                            }
+                          }}
+                          hitSlop={10}
+                          style={({ pressed }) => ({ opacity: pressed ? 0.75 : 1 })}
+                        >
+                          <MaterialCommunityIcons name="trash-can-outline" size={18} color="rgba(233,238,243,0.55)" />
+                        </Pressable>
+                      ) : null}
                     </View>
                   </View>
                 </GlassCard>

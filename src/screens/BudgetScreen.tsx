@@ -13,6 +13,8 @@ import type { Budget } from '../data/types';
 import { ModalShell } from '../components/ModalShell';
 import { FieldLabel, TextField } from '../components/Inputs';
 import { PrimaryButton } from '../components/Button';
+import { useAuth } from '../auth/AuthContext';
+import { useFeedback } from '../feedback/FeedbackContext';
 
 function clamp01(x: number) {
   return Math.max(0, Math.min(1, x));
@@ -20,6 +22,8 @@ function clamp01(x: number) {
 
 export function BudgetScreen() {
   const { data, updateBudget, deleteBudget } = useData();
+  const { canModifyAll } = useAuth();
+  const { showMessage } = useFeedback();
   const now = new Date();
 
   const [addOpen, setAddOpen] = useState(false);
@@ -37,7 +41,13 @@ export function BudgetScreen() {
             <P style={{ marginTop: 2 }}>{new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(now)}</P>
           </View>
           <Pressable
-            onPress={() => setAddOpen(true)}
+            onPress={() => {
+              if (!canModifyAll) {
+                showMessage('Only the main admin can manage budgets.', 'error');
+                return;
+              }
+              setAddOpen(true);
+            }}
             style={({ pressed }) => ({
               height: 34,
               borderRadius: 10,
@@ -135,19 +145,27 @@ export function BudgetScreen() {
                       </View>
                     </View>
 
-                    <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                      <Pressable onPress={() => setEdit(b)} hitSlop={10}>
-                        <MaterialCommunityIcons name="pencil-outline" size={18} color="rgba(233,238,243,0.55)" />
-                      </Pressable>
-                      <Pressable
-                        onPress={async () => {
-                          await deleteBudget(b.id);
-                        }}
-                        hitSlop={10}
-                      >
-                        <MaterialCommunityIcons name="trash-can-outline" size={18} color="rgba(233,238,243,0.55)" />
-                      </Pressable>
-                    </View>
+                    {canModifyAll ? (
+                      <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                        <Pressable onPress={() => setEdit(b)} hitSlop={10}>
+                          <MaterialCommunityIcons name="pencil-outline" size={18} color="rgba(233,238,243,0.55)" />
+                        </Pressable>
+                        <Pressable
+                          onPress={async () => {
+                            try {
+                              await deleteBudget(b.id);
+                              showMessage('Budget deleted.', 'success');
+                            } catch (e) {
+                              const msg = e instanceof Error ? e.message : 'Unable to delete budget.';
+                              showMessage(msg, 'error');
+                            }
+                          }}
+                          hitSlop={10}
+                        >
+                          <MaterialCommunityIcons name="trash-can-outline" size={18} color="rgba(233,238,243,0.55)" />
+                        </Pressable>
+                      </View>
+                    ) : null}
                   </View>
 
                   <View
@@ -181,8 +199,14 @@ export function BudgetScreen() {
           budget={edit}
           onClose={() => setEdit(null)}
           onSave={async (monthlyLimit) => {
-            await updateBudget({ ...edit, monthlyLimit });
-            setEdit(null);
+            try {
+              await updateBudget({ ...edit, monthlyLimit });
+              showMessage('Budget updated.', 'success');
+              setEdit(null);
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : 'Unable to update budget.';
+              showMessage(msg, 'error');
+            }
           }}
         />
       ) : null}

@@ -7,9 +7,11 @@ import { useData } from '../data/DataContext';
 import type { ExpenseCategory, PaymentMethod } from '../data/types';
 import { expenseCategories, paymentMethods } from '../constants/categories';
 import { toISODate } from '../utils/dates';
+import { useFeedback } from '../feedback/FeedbackContext';
 
 export function AddExpenseModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const { addExpense } = useData();
+  const { showMessage } = useFeedback();
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<ExpenseCategory | null>(null);
@@ -69,19 +71,25 @@ export function AddExpenseModal({ visible, onClose }: { visible: boolean; onClos
           title="Add Expense"
           disabled={!canSubmit}
           onPress={async () => {
-            await addExpense({
-              title: title.trim(),
-              amount: Number(amount),
-              category: category!,
-              paymentMethod: paymentMethod!,
-              occurredAtISO: dateISO,
-            });
-            setTitle('');
-            setAmount('');
-            setCategory(null);
-            setPaymentMethod(null);
-            setDateISO(toISODate(new Date()));
-            onClose();
+            try {
+              await addExpense({
+                title: title.trim(),
+                amount: Number(amount),
+                category: category!,
+                paymentMethod: paymentMethod!,
+                occurredAtISO: dateISO,
+              });
+              showMessage('Expense added successfully.', 'success');
+              setTitle('');
+              setAmount('');
+              setCategory(null);
+              setPaymentMethod(null);
+              setDateISO(toISODate(new Date()));
+              onClose();
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : 'Unable to add expense.';
+              showMessage(msg, 'error');
+            }
           }}
         />
       </View>

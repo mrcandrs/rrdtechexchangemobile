@@ -15,6 +15,8 @@ import { ChallengesScreen } from '../screens/ChallengesScreen';
 import { AddExpenseModal } from '../modals/AddExpenseModal';
 import { NewBudgetModal } from '../modals/NewBudgetModal';
 import { NewChallengeModal } from '../modals/NewChallengeModal';
+import { useAuth } from '../auth/AuthContext';
+import { useFeedback } from '../feedback/FeedbackContext';
 
 export type RootTabParamList = {
   Dashboard: undefined;
@@ -39,6 +41,8 @@ const navTheme: Theme = {
 
 export function AppNavigator() {
   const insets = useSafeAreaInsets();
+  const { canModifyAll } = useAuth();
+  const { showMessage } = useFeedback();
   const [fabOpen, setFabOpen] = useState(false);
   const [expenseOpen, setExpenseOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
@@ -111,6 +115,10 @@ export function AppNavigator() {
                   icon="wallet-plus-outline"
                   title="Create Budget"
                   onPress={() => {
+                    if (!canModifyAll) {
+                      showMessage('Only the main admin can manage budgets.', 'error');
+                      return;
+                    }
                     setFabOpen(false);
                     setBudgetOpen(true);
                   }}
@@ -119,6 +127,10 @@ export function AppNavigator() {
                   icon="target-variant"
                   title="Start Challenge"
                   onPress={() => {
+                    if (!canModifyAll) {
+                      showMessage('Only the main admin can manage challenges.', 'error');
+                      return;
+                    }
                     setFabOpen(false);
                     setChallengeOpen(true);
                   }}
